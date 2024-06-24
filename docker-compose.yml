@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  product-service-db:
+    image: postgres
+    restart: always
+    ports:
+      - 54321:5432
+    shm_size: 512mb
+    environment:
+      POSTGRES_DB: products
+      POSTGRES_USER: product-service
+      POSTGRES_PASSWORD: prod
+    volumes:
+      - product-service-db-data:/var/lib/postgresql/data
+    networks:
+      - octo-umbrella
+
+  product-service:
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8081:8080
+    depends_on:
+      - product-service-db
+    environment:
+      DATASOURCE_USERNAME: "product-service"
+      DATASOURCE_PASSWORD: "prod"
+      DATASOURCE_URL: "product-service-db:5432"
+      DATASOURCE_NAME: "products"
+    networks:
+      - octo-umbrella
+
+volumes:
+  product-service-db-data:
+
+networks:
+  octo-umbrella:
+    driver: bridge
