@@ -5,5 +5,5 @@ RUN mvn -f /home/app/pom.xml clean package
 
 FROM openjdk:17-jdk-alpine
 LABEL maintainer="MykhailoTiutiun <mykhailotiutiun@gmail.com>"
-COPY --from=build /home/app/target/product-service.jar product-service.jar
-ENTRYPOINT ["java","-jar","/product-service.jar"]
+COPY --from=build /home/app/target/discovery-service.jar discovery-service.jar
+ENTRYPOINT ["java","-jar","/discovery-service.jar"]
