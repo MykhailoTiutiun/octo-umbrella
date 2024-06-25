@@ -3,6 +3,7 @@ package com.mykhailotiutiun.orderservice;
 import io.katharsis.spring.boot.v3.KatharsisConfigV3;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication

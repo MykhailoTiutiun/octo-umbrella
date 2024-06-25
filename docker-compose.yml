@@ -24,8 +24,10 @@ services:
     ports:
       - 8081:8080
     depends_on:
+      - discovery-service
       - product-service-db
     environment:
+      EUREKA_URL: "http://discovery-service:8761/eureka"
       DATASOURCE_USERNAME: "product-service"
       DATASOURCE_PASSWORD: "prod"
       DATASOURCE_URL: "product-service-db:5432"
@@ -37,6 +39,8 @@ services:
   order-service-db:
     image: postgres
     restart: always
+    ports:
+      - 54322:5432
     shm_size: 512mb
     environment:
       POSTGRES_DB: orders
@@ -55,12 +59,24 @@ services:
     ports:
       - 8082:8080
     depends_on:
+      - discovery-service
       - order-service-db
     environment:
+      EUREKA_URL: "http://discovery-service:8761/eureka"
       DATASOURCE_USERNAME: "order-service"
       DATASOURCE_PASSWORD: "order"
       DATASOURCE_URL: "order-service-db:5432"
       DATASOURCE_NAME: "orders"
+    networks:
+      - octo-umbrella
+
+  discovery-service:
+    build:
+      context: ./discovery-service
+      dockerfile: Dockerfile
+    ports:
+      - 8761:8761
+    restart: unless-stopped
     networks:
       - octo-umbrella
 
