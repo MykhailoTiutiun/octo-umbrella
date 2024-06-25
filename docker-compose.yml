@@ -34,6 +34,8 @@ services:
   order-service-db:
     image: postgres
     restart: always
+    ports:
+      - 54322:5432
     shm_size: 512mb
     environment:
       POSTGRES_DB: orders
