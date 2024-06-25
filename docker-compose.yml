@@ -78,7 +78,10 @@ services:
     restart: unless-stopped
     ports:
       - 8080:8080
+    environment:
+      EUREKA_URL: "http://discovery-service:8761/eureka"
     depends_on:
+      - discovery-service
       - product-service
       - order-service
     networks:

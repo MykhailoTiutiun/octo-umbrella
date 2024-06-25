@@ -3,7 +3,7 @@ COPY src /home/app/src
 COPY pom.xml /home/app
 RUN mvn -f /home/app/pom.xml clean package
 
-FROM tomcat:10.1.11
+FROM openjdk:17-jdk-alpine
 LABEL maintainer="MykhailoTiutiun <mykhailotiutiun@gmail.com>"
-COPY --from=build /home/app/target/gateway.war /usr/local/tomcat/webapps-javaee/ROOT.war
-CMD ["catalina.sh", "run"]
+COPY --from=build /home/app/target/gateway.jar gateway.jar
+ENTRYPOINT ["java", "-jar", "/gateway.jar"]
