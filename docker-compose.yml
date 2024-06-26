@@ -4,7 +4,7 @@ services:
   product-service-db:
     image: postgres
     restart: always
-    shm_size: 512mb
+    shm_size: 128mb
     environment:
       POSTGRES_DB: products
       POSTGRES_USER: product-service
@@ -35,7 +35,7 @@ services:
   order-service-db:
     image: postgres
     restart: always
-    shm_size: 512mb
+    shm_size: 128mb
     environment:
       POSTGRES_DB: orders
       POSTGRES_USER: order-service
@@ -60,6 +60,37 @@ services:
       DATASOURCE_PASSWORD: "order"
       DATASOURCE_URL: "order-service-db:5432"
       DATASOURCE_NAME: "orders"
+    networks:
+      - octo-umbrella
+
+  user-service-db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_DB: users
+      POSTGRES_USER: user-service
+      POSTGRES_PASSWORD: user
+    volumes:
+      - user-service-db-data:/var/lib/postgresql/data
+    networks:
+      - octo-umbrella
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
+      - user-service-db
+    environment:
+      CONFIG_URL: "http://config-service:8888"
+      EUREKA_URL: "http://discovery-service:8761/eureka"
+      DATASOURCE_USERNAME: "user-service"
+      DATASOURCE_PASSWORD: "user"
+      DATASOURCE_URL: "user-service-db:5432"
+      DATASOURCE_NAME: "users"
     networks:
       - octo-umbrella
 
@@ -96,12 +127,14 @@ services:
       - discovery-service
       - product-service
       - order-service
+      - user-service
     networks:
       - octo-umbrella
 
 volumes:
   product-service-db-data:
   order-service-db-data:
+  user-service-db-data:
 
 networks:
   octo-umbrella:
