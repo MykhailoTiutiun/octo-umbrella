@@ -23,6 +23,7 @@ services:
       - discovery-service
       - product-service-db
     environment:
+      CONFIG_URL: "http://config-service:8888"
       EUREKA_URL: "http://discovery-service:8761/eureka"
       DATASOURCE_USERNAME: "product-service"
       DATASOURCE_PASSWORD: "prod"
@@ -53,6 +54,7 @@ services:
       - discovery-service
       - order-service-db
     environment:
+      CONFIG_URL: "http://config-service:8888"
       EUREKA_URL: "http://discovery-service:8761/eureka"
       DATASOURCE_USERNAME: "order-service"
       DATASOURCE_PASSWORD: "order"
