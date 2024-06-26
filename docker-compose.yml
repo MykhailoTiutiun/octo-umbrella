@@ -23,6 +23,7 @@ services:
       - discovery-service
       - product-service-db
     environment:
+      CONFIG_URL: "http://config-service:8888"
       EUREKA_URL: "http://discovery-service:8761/eureka"
       DATASOURCE_USERNAME: "product-service"
       DATASOURCE_PASSWORD: "prod"
@@ -34,8 +35,6 @@ services:
   order-service-db:
     image: postgres
     restart: always
-    ports:
-      - 54322:5432
     shm_size: 512mb
     environment:
       POSTGRES_DB: orders
@@ -55,6 +54,7 @@ services:
       - discovery-service
       - order-service-db
     environment:
+      CONFIG_URL: "http://config-service:8888"
       EUREKA_URL: "http://discovery-service:8761/eureka"
       DATASOURCE_USERNAME: "order-service"
       DATASOURCE_PASSWORD: "order"
@@ -69,6 +69,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8761:8761
+    restart: unless-stopped
+    networks:
+      - octo-umbrella
+
+  config-service:
+    build:
+      context: ./config-service
+      dockerfile: Dockerfile
+    ports:
+      - 8888:8888
     restart: unless-stopped
     networks:
       - octo-umbrella
