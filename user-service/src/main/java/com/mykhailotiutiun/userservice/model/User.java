@@ -38,14 +38,19 @@ public class User {
     @NotBlank
     @Size(max = 255)
     @Email
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
+    @NotNull
+    @NotBlank
     @Size(max = 255)
+    @Column(unique = true, nullable = false)
     private String phoneNumber;
     @NotNull
     @NotBlank
     @Size(max = 255)
     @Column(nullable = false)
     private String password;
-
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 }
