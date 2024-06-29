@@ -1,5 +1,6 @@
 package com.mykhailotiutiun.authservice.jwt;
 
+import com.mykhailotiutiun.authservice.model.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -31,9 +32,9 @@ public class JwtUtil {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, CustomUserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (username.equals(String.valueOf(userDetails.getId())) && !isTokenExpired(token));
     }
 
     private Boolean isTokenExpired(String token) {
@@ -44,9 +45,10 @@ public class JwtUtil {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(CustomUserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        claims.put("role", userDetails.getRole().name());
+        return createToken(claims, String.valueOf(userDetails.getId()));
     }
 
     private String createToken(Map<String, Object> claims, String subject) {

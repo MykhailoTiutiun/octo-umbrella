@@ -130,6 +130,7 @@ services:
       - 8080:8080
     environment:
       EUREKA_URL: "http://discovery-service:8761/eureka"
+      JWT_SECRET: "e8a0c634edb35261fcd9fd07916afe1883140b24207df3e662adac10491e49ed"
     networks:
       - octo-umbrella
 
