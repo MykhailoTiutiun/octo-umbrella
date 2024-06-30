@@ -30,6 +30,10 @@ public class GatewayConfig {
                         .filters(f -> f.filter(filter))
                         .uri("lb://order-service"))
 
+                .route("image-service", r -> r.path("/images/**")
+                        .filters(f -> f.filter(filter))
+                        .uri("lb://image-service"))
+
                 .route("auth-service", r -> r.path("/auth/**")
                         .uri("lb://auth-service"))
 
