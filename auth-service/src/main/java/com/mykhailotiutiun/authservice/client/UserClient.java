@@ -34,6 +34,7 @@ public class UserClient {
                 .email(response.getEmail())
                 .password(response.getPassword())
                 .role(Role.valueOf(response.getRole().name()))
+                .enabled(response.getEnabled())
                 .build();
     }
 
@@ -51,6 +52,11 @@ public class UserClient {
                 .firstName(response.getFirstName())
                 .secondName(response.getSecondName())
                 .phoneNumber(response.getPhoneNumber())
+                .enabled(response.getEnabled())
                 .build();
+    }
+
+    public void confirmRegister(String token){
+        userServiceStub.confirmEmail(ConfirmEmailRequest.newBuilder().setToken(token).build());
     }
 }

@@ -5,6 +5,8 @@ import com.mykhailotiutiun.userservice.model.User;
 import com.mykhailotiutiun.userservice.repository.UserRepository;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -12,12 +14,15 @@ import javax.persistence.EntityNotFoundException;
 public class UserProviderService extends UserServiceGrpc.UserServiceImplBase {
 
     private final UserRepository userRepository;
+    private final EmailVerificationService emailVerificationService;
 
-    public UserProviderService(UserRepository userRepository) {
+    public UserProviderService(UserRepository userRepository, EmailVerificationService emailVerificationService) {
         this.userRepository = userRepository;
+        this.emailVerificationService = emailVerificationService;
     }
 
     @Override
+    @Transactional
     public void registerUser(final RegisterUserRequest request, final StreamObserver<RegisterUserResponse> responseStreamObserver) {
         User user = userRepository.save(User.builder()
                 .email(request.getEmail())
@@ -26,6 +31,7 @@ public class UserProviderService extends UserServiceGrpc.UserServiceImplBase {
                 .secondName(request.getSecondName())
                 .phoneNumber(request.getPhoneNumber())
                 .role(com.mykhailotiutiun.userservice.model.Role.USER)
+                .enabled(false)
                 .build());
         responseStreamObserver.onNext(
                 RegisterUserResponse.newBuilder()
@@ -34,8 +40,10 @@ public class UserProviderService extends UserServiceGrpc.UserServiceImplBase {
                         .setFirstName(user.getFirstName())
                         .setSecondName(user.getSecondName())
                         .setPhoneNumber(user.getPhoneNumber())
+                        .setEnabled(user.getEnabled())
                         .build()
         );
+        emailVerificationService.beginVerification(user);
         responseStreamObserver.onCompleted();
     }
 
@@ -49,8 +57,16 @@ public class UserProviderService extends UserServiceGrpc.UserServiceImplBase {
                         .setPhoneNumber(user.getPhoneNumber())
                         .setPassword(user.getPassword())
                         .setRole(Role.forNumber(user.getRole().ordinal()))
+                        .setEnabled(user.getEnabled())
                         .build()
         );
+        responseStreamObserver.onCompleted();
+    }
+
+    @Override
+    public void confirmEmail(final ConfirmEmailRequest request, final StreamObserver<ConfirmEmailResponse> responseStreamObserver){
+        emailVerificationService.verify(request.getToken());
+        responseStreamObserver.onNext(ConfirmEmailResponse.newBuilder().build());
         responseStreamObserver.onCompleted();
     }
 }
