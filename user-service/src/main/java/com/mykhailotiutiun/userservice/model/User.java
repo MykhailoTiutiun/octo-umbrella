@@ -53,4 +53,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+    @NotNull
+    @Column(nullable = false)
+    private Boolean enabled = false;
 }

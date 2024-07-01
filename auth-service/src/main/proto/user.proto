@@ -7,6 +7,7 @@ option java_outer_classname = "UserGrpcProto";
 service UserService {
   rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
   rpc LoginUser (LoginUserRequest) returns (LoginUserResponse);
+  rpc ConfirmEmail (ConfirmEmailRequest) returns (ConfirmEmailResponse);
 }
 
 message RegisterUserRequest {
@@ -23,6 +24,7 @@ message RegisterUserResponse {
   string firstName = 3;
   string secondName = 4;
   string phoneNumber = 5;
+  bool enabled = 6;
 }
 
 message LoginUserRequest {
@@ -35,6 +37,14 @@ message LoginUserResponse {
   optional string phone_number = 3;
   string password = 4;
   Role role = 5;
+  bool enabled = 6;
+}
+
+message ConfirmEmailRequest {
+  string token = 1;
+}
+
+message ConfirmEmailResponse {
 }
 
 enum Role {
